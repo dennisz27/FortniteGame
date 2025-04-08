@@ -51,20 +51,20 @@ public class Character {
         xpos = xpos + dx;
         ypos = ypos + dy;
 
-        if(xpos >= 1000){
-            xpos = -width;
+        if(xpos >= 1000 && dx > 0){
+            xpos = -50;
         }
 
-        if(xpos == 0){
-            xpos = 1000-width;
+        if(xpos <= -51){
+            xpos = 999;
         }
 
-        if(ypos >= 700){
-            ypos = -height;
+        if(ypos >= 700 && dy > 0){
+            ypos = -70;
         }
 
-        if(ypos == 0){
-            ypos = 700-height;
+        if(ypos <= -71 && dy < 0){
+            ypos = 699;
         }
         hitbox = new Rectangle(xpos, ypos, width, height);
     }

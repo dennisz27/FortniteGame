@@ -138,7 +138,7 @@ public class BasicGameApp implements Runnable, KeyListener {
             manyKrampus[i].move();
         }
 
-        jonesy.move();
+        jonesy.wrap();
         jonesy.printInfo();
 
         if(jonesy.left == true) {
