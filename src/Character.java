@@ -18,6 +18,10 @@ public class Character {
     public boolean down = false;
     public boolean left = false;
     public boolean right = false;
+    public boolean lright = false;
+    public boolean lleft = false;
+    public boolean lup = false;
+    public boolean ldown = false;
 
     public Character() {
         hitbox = new Rectangle();
@@ -31,20 +35,28 @@ public class Character {
         width = paramWidth;
         height = paramHeight;
         hitbox = new Rectangle(xpos, ypos, width, height);
+
     }
 
+
     public void move() {
-        xpos = xpos + dx;
-        ypos = ypos + dy;
+        xpos += dx;
+        ypos += dy;
 
-        if (ypos >= 700 - width  || ypos <= 0) {
-            dy = -dy;
+        if (xpos >= 1000) {
+            xpos = -width;
+        }
+        if (xpos + width <= 0) {
+            xpos = 1000;
+        }
+        if (ypos >= 700) {
+            ypos = -height;
+        }
+        if (ypos + height <= 0) {
+            ypos = 700;
         }
 
-        if (xpos >= 1000 - width || xpos <= 0) {
-            dx = -dx;
-        }
-        hitbox = new Rectangle(xpos, ypos, width, height);
+        hitbox.setBounds(xpos, ypos, width, height);
     }
 
     public void wrap(){
@@ -60,10 +72,10 @@ public class Character {
         }
 
         if(ypos >= 700 && dy > 0){
-            ypos = -70;
+            ypos = -80;
         }
 
-        if(ypos <= -71 && dy < 0){
+        if(ypos <= -81 && dy < 0){
             ypos = 699;
         }
         hitbox = new Rectangle(xpos, ypos, width, height);

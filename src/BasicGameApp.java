@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -30,8 +31,7 @@ public class BasicGameApp implements Runnable, KeyListener {
     //Declare the variables used in the program
     //You can set their initial values too
     public Character jonesy;
-    public Character krampus;
-    public Character[] manyKrampus;
+    public Shield mini;
 
     Image backgroundPic;
 
@@ -46,6 +46,15 @@ public class BasicGameApp implements Runnable, KeyListener {
 
     public BufferStrategy bufferStrategy;
 
+    public int randomX() {
+        return (int)(Math.random() * 950); // keep it on screen
+    }
+
+    public int randomY() {
+        return (int)(Math.random() * 650);
+    }
+
+    int maxShields = 3;
     // Main method definition
     // This is the code that runs first and automatically
     public static void main(String[] args) {
@@ -53,6 +62,11 @@ public class BasicGameApp implements Runnable, KeyListener {
         new Thread(ex).start();                 //creates a threads & starts up the code in the run( ) method
     }
 
+
+    ArrayList<Shield> pots = new ArrayList<>();
+    ArrayList<RPG> rpgs = new ArrayList<>();
+    long lastPotTime = 0;
+    long lastRPGTime = 0;
 
     // This section is the setup portion of the program
     // Initialize your variables and construct your program objects here.
@@ -69,23 +83,19 @@ public class BasicGameApp implements Runnable, KeyListener {
 
         //variable and objects
         //create (construct) the objects needed for the game
-        jonesy = new Character(100,100,0,0,100,100);
+        jonesy = new Character(450,300,0,0,100,100);
         jonesy.name = "Jonesy";
         jonesy.pic = Toolkit.getDefaultToolkit().getImage("jonesy.png");
+        mini = new Shield(randomX(), randomY());
+        mini.pic = Toolkit.getDefaultToolkit().getImage("mini.png");
 
-
-        manyKrampus = new Character[5];
-        for (int i = 0; i< manyKrampus.length; i++) {
-            manyKrampus[i] = new Character((int)(990* Math.random() + 1), (int)(690 * Math.random() + 1), 5, 5, 5, 5);
+        if (mini.pic == null) {
+            System.out.println("Failed");
+        } else {
+            System.out.println("Loaded");
         }
 
-        krampus = new Character(200, 400,0,0,100,100);
-        krampus.name = "krampus";
-        krampus.pic = Toolkit.getDefaultToolkit().getImage("krampus.png");
 
-        for (int i=0; i< manyKrampus.length; i++) {
-            manyKrampus[i].pic = Toolkit.getDefaultToolkit().getImage("krampus.png");
-        }
 
     } // end BasicGameApp constructor
 
@@ -99,63 +109,104 @@ public class BasicGameApp implements Runnable, KeyListener {
     // this is the code that plays the game after you set things up
     public void run() {
         //for the moment we will loop things forever.
+        long lastShieldSpawn = System.currentTimeMillis();
+        long lastRPGSpawn = System.currentTimeMillis();
+
         while (true) {
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - lastShieldSpawn > 3000) { // Every 3 seconds and max 3 shields
+                pots.add(new Shield(randomX(), randomY()));
+                lastShieldSpawn = currentTime;
+            }
+
+            if (currentTime - lastRPGSpawn > 2000) {
+                int Xco = 0;
+                int Yco = 0;
+                int side = (int) (Math.random() * 4);
+
+                if (side == 0) {
+                    Xco = 0;
+                    Yco = (int) (Math.random() * HEIGHT);
+                } else if (side == 1) {
+                    Xco = WIDTH;
+                    Yco = (int) (Math.random() * HEIGHT);
+                } else if (side == 2) {
+                    Xco = (int) (Math.random() * WIDTH);
+                    Yco = 0;
+                } else if (side == 3) {
+                    Xco = (int) (Math.random() * WIDTH);
+                    Yco = HEIGHT;
+                }
+
+                rpgs.add(new RPG(Xco, Yco, jonesy.xpos, jonesy.ypos));
+                lastRPGSpawn = currentTime;
+            }
+
             checkKeys();
-            moveThings();  //move all the game objects
+            jonesy.move();
+            for (RPG r : rpgs){
+                r.move();
+            }
+
             collide();
-            render();  // paint the graphics
-            pause(10); // sleep for 10 ms
-        }
+            render();
+            moveThings();
+            pause(10);
+        }  //move all the game objects
+
     }
 
     public void checkKeys() {
-        if(jonesy.up == true) {
-            jonesy.dy = -5;
-        }
-        else if(jonesy.down == true) {
-            jonesy.dy = 5;
-        }
-        else {
-            jonesy.dy = 0;
-        }
 
-        if(jonesy.right == true) {
-            jonesy.dx = 5;
-        }
-        else if(jonesy.left == true) {
-            jonesy.dx = -5;
-        }
-        else {
-            jonesy.dx = 0;
-        }
+
+        int speed = 2;
+        jonesy.dx = 0;
+        jonesy.dy = 0;
+        if (jonesy.up) jonesy.dy = -speed;
+        if (jonesy.down) jonesy.dy = speed;
+        if (jonesy.left) jonesy.dx = -speed;
+        if (jonesy.right) jonesy.dx = speed;
+
+        jonesy.move();
+
 
     }
 
     public void moveThings() {
-        krampus.wrap();
-        krampus.printInfo();
-        for (int i=0; i< manyKrampus.length; i++) {
-            manyKrampus[i].move();
-        }
+
 
         jonesy.wrap();
-        jonesy.printInfo();
 
         if(jonesy.left == true) {
             jonesy.pic = Toolkit.getDefaultToolkit().getImage("jonesy1.png");
-        } else {
+        } else if(jonesy.right == true) {
             jonesy.pic = Toolkit.getDefaultToolkit().getImage("jonesy.png");
         }
         //call the move() code for each object
     }
 
     public void collide() {
-        if (jonesy.hitbox.intersects(krampus.hitbox)) {
-            jonesy.dx = -jonesy.dx;
-            jonesy.dy = -jonesy.dy;
-            krampus.dx = -krampus.dx;
-            krampus.dy = -krampus.dy;
+
+        for (Shield pot : pots) {
+            if (!pot.collected && new Rectangle(pot.xpos, pot.ypos, pot.width, pot.height)
+                    .intersects(new Rectangle(jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height))) {
+                pot.collected = true;
+            }
         }
+
+        for (int i = 0; i < rpgs.size(); i++) {
+            RPG rpg = rpgs.get(i);
+            Rectangle rpgRect = new Rectangle(rpg.xpos, rpg.ypos, rpg.width, rpg.height);
+            Rectangle jonesyRect = new Rectangle(jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height);
+
+            if (rpgRect.intersects(jonesyRect)) {
+                System.out.println("hit");
+                rpgs.remove(i);
+                i--;
+            }
+        }
+
     }
 
     //Paints things on the screen using bufferStrategy
@@ -169,15 +220,16 @@ public class BasicGameApp implements Runnable, KeyListener {
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
-        g.drawImage(krampus.pic, krampus.xpos, krampus.ypos, krampus.width, krampus.height, null);
         g.drawImage(jonesy.pic, jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height, null);
         g.setColor(Color.MAGENTA);
         g.setColor(Color.MAGENTA);
-        g.drawRect(krampus.hitbox.x, krampus.hitbox.y, krampus.hitbox.width, krampus.hitbox.height);
 
 
+        for (Shield pot : pots) pot.draw(g);
+        for (RPG rpg : rpgs) rpg.draw(g);
         g.dispose();
         bufferStrategy.show();
+
     }
 
     //Pauses or sleeps the computer for the amount specified in milliseconds
@@ -228,19 +280,23 @@ public class BasicGameApp implements Runnable, KeyListener {
 
         if (keyCode == 87) {
             jonesy.up = true;
+            jonesy.lup = true;
         }
 
         if (keyCode == 83) {
             jonesy.down = true;
+            jonesy.ldown = true;
 
         }
 
         if (keyCode == 68) {
             jonesy.right = true;
+            jonesy.lright = true;
         }
 
         if (keyCode == 65){
             jonesy.left = true;
+            jonesy.lleft = true;
         }
 
 
@@ -270,18 +326,22 @@ public class BasicGameApp implements Runnable, KeyListener {
         int keyCode = e.getKeyCode();
 
         if(keyCode == 87) {
+            jonesy.lup = false;
             jonesy.up = false;
         }
 
         if (keyCode == 83) {
+            jonesy.ldown = false;
             jonesy.down = false;
         }
 
         if (keyCode == 68) {
+            jonesy.lright = false;
             jonesy.right = false;
         }
 
         if (keyCode == 65) {
+            jonesy.lleft = false;
             jonesy.left = false;
         }
 
