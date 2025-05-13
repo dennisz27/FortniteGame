@@ -120,12 +120,12 @@ public class BasicGameApp implements Runnable, KeyListener {
 
                 long currentTime = System.currentTimeMillis();
 
-                if (currentTime - lastShieldSpawn > 3000) { // Every 3 seconds and max 3 shields
+                if (currentTime - lastShieldSpawn > 4000) {
                     pots.add(new Shield(randomX(), randomY()));
                     lastShieldSpawn = currentTime;
                 }
 
-                if (currentTime - lastRPGSpawn > 2000) {
+                if (currentTime - lastRPGSpawn > 1500) {
                     int Xco = 0;
                     int Yco = 0;
                     int side = (int) (Math.random() * 4);
