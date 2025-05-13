@@ -1,10 +1,14 @@
 import java.awt.*;
 
 public class RPG {
-    int xpos, ypos, width = 70, height = 70;
+    int xpos;
+    int ypos;
+    int width = 70;
+    int height = 70;
     boolean exploded = false;
     int explodedTime = 0;
-    double dx, dy;
+    double dx;
+    double dy;
     Image pic;
 
     public RPG(int startX, int startY, int targetX, int targetY) {
@@ -12,13 +16,25 @@ public class RPG {
         ypos = startY;
         pic = Toolkit.getDefaultToolkit().getImage("rockets.png");
 
-        int diffX = targetX - startX;
-        int diffY = targetY - startY;
-        double distance = Math.sqrt(diffX * diffX + diffY * diffY);
+        int speed = 6;
 
-        dx = (diffX / distance) * 6;
-        dy = (diffY / distance) * 6;
+        if (targetX > startX) {
+            dx = speed;
+        } else if (targetX < startX) {
+            dx = -speed;
+        } else {
+            dx = 0;
+        }
+
+        if (targetY > startY) {
+            dy = speed;
+        } else if (targetY < startY) {
+            dy = -speed;
+        } else {
+            dy = 0;
+        }
     }
+
 
     public void move() {
         if (!exploded) {

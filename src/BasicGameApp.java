@@ -54,6 +54,9 @@ public class BasicGameApp implements Runnable, KeyListener {
         return (int)(Math.random() * 650);
     }
 
+    public boolean gameOver = false;
+    public int jonesyHealth = 3;
+
     int maxShields = 3;
     // Main method definition
     // This is the code that runs first and automatically
@@ -113,45 +116,48 @@ public class BasicGameApp implements Runnable, KeyListener {
         long lastRPGSpawn = System.currentTimeMillis();
 
         while (true) {
-            long currentTime = System.currentTimeMillis();
+            if(!gameOver) {
 
-            if (currentTime - lastShieldSpawn > 3000) { // Every 3 seconds and max 3 shields
-                pots.add(new Shield(randomX(), randomY()));
-                lastShieldSpawn = currentTime;
-            }
+                long currentTime = System.currentTimeMillis();
 
-            if (currentTime - lastRPGSpawn > 2000) {
-                int Xco = 0;
-                int Yco = 0;
-                int side = (int) (Math.random() * 4);
-
-                if (side == 0) {
-                    Xco = 0;
-                    Yco = (int) (Math.random() * HEIGHT);
-                } else if (side == 1) {
-                    Xco = WIDTH;
-                    Yco = (int) (Math.random() * HEIGHT);
-                } else if (side == 2) {
-                    Xco = (int) (Math.random() * WIDTH);
-                    Yco = 0;
-                } else if (side == 3) {
-                    Xco = (int) (Math.random() * WIDTH);
-                    Yco = HEIGHT;
+                if (currentTime - lastShieldSpawn > 3000) { // Every 3 seconds and max 3 shields
+                    pots.add(new Shield(randomX(), randomY()));
+                    lastShieldSpawn = currentTime;
                 }
 
-                rpgs.add(new RPG(Xco, Yco, jonesy.xpos, jonesy.ypos));
-                lastRPGSpawn = currentTime;
-            }
+                if (currentTime - lastRPGSpawn > 2000) {
+                    int Xco = 0;
+                    int Yco = 0;
+                    int side = (int) (Math.random() * 4);
 
-            checkKeys();
-            jonesy.move();
-            for (RPG r : rpgs){
-                r.move();
-            }
+                    if (side == 0) {
+                        Xco = 0;
+                        Yco = (int) (Math.random() * HEIGHT);
+                    } else if (side == 1) {
+                        Xco = WIDTH;
+                        Yco = (int) (Math.random() * HEIGHT);
+                    } else if (side == 2) {
+                        Xco = (int) (Math.random() * WIDTH);
+                        Yco = 0;
+                    } else if (side == 3) {
+                        Xco = (int) (Math.random() * WIDTH);
+                        Yco = HEIGHT;
+                    }
 
-            collide();
+                    rpgs.add(new RPG(Xco, Yco, jonesy.xpos, jonesy.ypos));
+                    lastRPGSpawn = currentTime;
+                }
+
+                checkKeys();
+                jonesy.move();
+                for (RPG r : rpgs) {
+                    r.move();
+                }
+
+                collide();
+                moveThings();
+            }
             render();
-            moveThings();
             pause(10);
         }  //move all the game objects
 
@@ -204,6 +210,11 @@ public class BasicGameApp implements Runnable, KeyListener {
                 System.out.println("hit");
                 rpgs.remove(i);
                 i--;
+                jonesyHealth--;
+
+                if(jonesyHealth == 0) {
+                    gameOver = true;
+                }
             }
         }
 
@@ -213,6 +224,11 @@ public class BasicGameApp implements Runnable, KeyListener {
     private void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
+
+        if(gameOver == true){
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
+        }
 
         //draw the images
         Color myColor = new Color(3, 120, 180);
@@ -277,6 +293,9 @@ public class BasicGameApp implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+
+        if (keyCode == 10){
+        }
 
         if (keyCode == 87) {
             jonesy.up = true;
