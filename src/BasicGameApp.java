@@ -56,6 +56,8 @@ public class BasicGameApp implements Runnable, KeyListener {
 
     public boolean gameOver = false;
     public int jonesyHealth = 3;
+    public int score = 0;
+    boolean showStartScreen = true;
 
     int maxShields = 3;
     // Main method definition
@@ -116,7 +118,9 @@ public class BasicGameApp implements Runnable, KeyListener {
         long lastRPGSpawn = System.currentTimeMillis();
 
         while (true) {
-            if(!gameOver) {
+            if (showStartScreen) {
+                render();
+            } else if (!gameOver) {
 
                 long currentTime = System.currentTimeMillis();
 
@@ -158,7 +162,7 @@ public class BasicGameApp implements Runnable, KeyListener {
                 moveThings();
             }
             render();
-            pause(10);
+            pause(8);
         }  //move all the game objects
 
     }
@@ -198,6 +202,7 @@ public class BasicGameApp implements Runnable, KeyListener {
             if (!pot.collected && new Rectangle(pot.xpos, pot.ypos, pot.width, pot.height)
                     .intersects(new Rectangle(jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height))) {
                 pot.collected = true;
+                score++;
             }
         }
 
@@ -225,31 +230,58 @@ public class BasicGameApp implements Runnable, KeyListener {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
-        if(gameOver == true){
+        if (showStartScreen == true) {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, WIDTH, HEIGHT);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString("Press ENTER to Start", 280, 350);
+            g.dispose();
+            bufferStrategy.show();
+            return;
         }
 
-        //draw the images
+        if (gameOver == true) {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, WIDTH, HEIGHT);
+            g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString("GAME OVER", 370, 300);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 24));
+            g.drawString("Score: " + score, 450, 350);
+            g.drawString("Press ENTER to Restart", 370, 400);
+
+            g.dispose();
+            bufferStrategy.show();
+            return;
+        }
+
         Color myColor = new Color(3, 120, 180);
         g.setColor(myColor);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
         g.drawImage(jonesy.pic, jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height, null);
-        g.setColor(Color.MAGENTA);
-        g.setColor(Color.MAGENTA);
-
 
         for (Shield pot : pots) pot.draw(g);
         for (RPG rpg : rpgs) rpg.draw(g);
+
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("Score: " + score, 20, 40);
+
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("Health: " + jonesyHealth, 875, 40);
+
         g.dispose();
         bufferStrategy.show();
 
     }
 
     //Pauses or sleeps the computer for the amount specified in milliseconds
-    public void pause(int time ) {
+    public void pause(int time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
@@ -293,6 +325,19 @@ public class BasicGameApp implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
+
+            if (keyCode == 10) {
+                if (showStartScreen || gameOver) {
+                    showStartScreen = false;
+                    gameOver = false;
+                    jonesyHealth = 3;
+                    score = 0;
+                    rpgs.clear();
+                    pots.clear();
+                    jonesy.xpos = 450;
+                    jonesy.ypos = 300;
+                }
+            }
 
         if (keyCode == 10){
         }
@@ -368,7 +413,7 @@ public class BasicGameApp implements Runnable, KeyListener {
 //            santa.dx = 0;
 //        }
 //        if(keyCode == 87 || keyCode == 83) {
-//            santa.dy=0;
+//            santa.dy=;
 //        }
     }
 }
