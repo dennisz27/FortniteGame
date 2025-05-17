@@ -84,7 +84,7 @@ public class BasicGameApp implements Runnable, KeyListener {
          */
 
         canvas.addKeyListener(this);
-        backgroundPic = Toolkit.getDefaultToolkit().getImage("krampusbg.jpg");
+        backgroundPic = Toolkit.getDefaultToolkit().getImage("wowza.jpg");
 
         //variable and objects
         //create (construct) the objects needed for the game
@@ -230,6 +230,8 @@ public class BasicGameApp implements Runnable, KeyListener {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
+        g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
+
         if (showStartScreen == true) {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -258,9 +260,7 @@ public class BasicGameApp implements Runnable, KeyListener {
             return;
         }
 
-        Color myColor = new Color(3, 120, 180);
-        g.setColor(myColor);
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+
 
         g.drawImage(backgroundPic, 0, 0, WIDTH, HEIGHT, null);
         g.drawImage(jonesy.pic, jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height, null);
@@ -270,11 +270,11 @@ public class BasicGameApp implements Runnable, KeyListener {
 
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("Score: " + score, 20, 40);
+        g.drawString("Score: " + score, 20, 60);
 
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 24));
-        g.drawString("Health: " + jonesyHealth, 875, 40);
+        g.drawString("Health: " + jonesyHealth, 875, 60);
 
         g.dispose();
         bufferStrategy.show();
