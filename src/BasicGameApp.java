@@ -234,8 +234,9 @@ public class BasicGameApp implements Runnable, KeyListener {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, WIDTH, HEIGHT);
             g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 48));
-            g.drawString("Press ENTER to Start", 280, 350);
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString("Press ENTER to Start", 350, 350);
+            g.drawString("Dodge Rockets and Collect Shields", 280, 400);
             g.dispose();
             bufferStrategy.show();
             return;
