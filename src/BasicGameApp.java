@@ -47,17 +47,17 @@ public class BasicGameApp implements Runnable, KeyListener {
     public BufferStrategy bufferStrategy;
 
     public int randomX() {
-        return (int)(Math.random() * 950); // keep it on screen
+        return (int)(Math.random() * 950); //set a random X coord on screen
     }
 
     public int randomY() {
-        return (int)(Math.random() * 650);
+        return (int)(Math.random() * 650); //set a random Y coord on screen
     }
 
-    public boolean gameOver = false;
-    public int jonesyHealth = 3;
-    public int score = 0;
-    boolean showStartScreen = true;
+    public boolean gameOver = false; //end Screen
+    public int jonesyHealth = 3; //set jonesy initial health
+    public int score = 0; //set initial score
+    boolean showStartScreen = true; //start Screen
 
     int maxShields = 3;
     // Main method definition
@@ -68,10 +68,9 @@ public class BasicGameApp implements Runnable, KeyListener {
     }
 
 
-    ArrayList<Shield> pots = new ArrayList<>();
-    ArrayList<RPG> rpgs = new ArrayList<>();
-    long lastPotTime = 0;
-    long lastRPGTime = 0;
+    ArrayList<Shield> pots = new ArrayList<>(); //arrayList of pots
+    ArrayList<RPG> rpgs = new ArrayList<>(); //arrayList of rpgs
+
 
     // This section is the setup portion of the program
     // Initialize your variables and construct your program objects here.
@@ -94,14 +93,6 @@ public class BasicGameApp implements Runnable, KeyListener {
         mini = new Shield(randomX(), randomY());
         mini.pic = Toolkit.getDefaultToolkit().getImage("mini.png");
 
-        if (mini.pic == null) {
-            System.out.println("Failed");
-        } else {
-            System.out.println("Loaded");
-        }
-
-
-
     } // end BasicGameApp constructor
 
 
@@ -114,27 +105,27 @@ public class BasicGameApp implements Runnable, KeyListener {
     // this is the code that plays the game after you set things up
     public void run() {
         //for the moment we will loop things forever.
-        long lastShieldSpawn = System.currentTimeMillis();
+        long lastShieldSpawn = System.currentTimeMillis(); //set var to the time of lastshiield spawn
         long lastRPGSpawn = System.currentTimeMillis();
-
-        while (true) {
-            if (showStartScreen) {
+//set var to the time of lastRPg spawn
+        while (true) { //runs code
+            if (showStartScreen) { //runs it showStartScreen is true
                 render();
             } else if (!gameOver) {
 
                 long currentTime = System.currentTimeMillis();
 
-                if (currentTime - lastShieldSpawn > 4000) {
+                if (currentTime - lastShieldSpawn > 4000) { // spawns shield after every 4 seconds
                     pots.add(new Shield(randomX(), randomY()));
                     lastShieldSpawn = currentTime;
                 }
 
-                if (currentTime - lastRPGSpawn > 1500) {
+                if (currentTime - lastRPGSpawn > 1500) { // spawns rocket after every 1.5 seconods
                     int Xco = 0;
                     int Yco = 0;
                     int side = (int) (Math.random() * 4);
 
-                    if (side == 0) {
+                    if (side == 0) { //spawns shield on random side
                         Xco = 0;
                         Yco = (int) (Math.random() * HEIGHT);
                     } else if (side == 1) {
@@ -198,7 +189,7 @@ public class BasicGameApp implements Runnable, KeyListener {
 
     public void collide() {
 
-        for (Shield pot : pots) {
+        for (Shield pot : pots) { //for every shield pot collected make pot dissapear and scor eincrease
             if (!pot.collected && new Rectangle(pot.xpos, pot.ypos, pot.width, pot.height)
                     .intersects(new Rectangle(jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height))) {
                 pot.collected = true;
@@ -206,7 +197,7 @@ public class BasicGameApp implements Runnable, KeyListener {
             }
         }
 
-        for (int i = 0; i < rpgs.size(); i++) {
+        for (int i = 0; i < rpgs.size(); i++) { //for every rpg hit remove a health
             RPG rpg = rpgs.get(i);
             Rectangle rpgRect = new Rectangle(rpg.xpos, rpg.ypos, rpg.width, rpg.height);
             Rectangle jonesyRect = new Rectangle(jonesy.xpos, jonesy.ypos, jonesy.width, jonesy.height);
@@ -217,7 +208,7 @@ public class BasicGameApp implements Runnable, KeyListener {
                 i--;
                 jonesyHealth--;
 
-                if(jonesyHealth == 0) {
+                if(jonesyHealth == 0) { //if health is zero set gameover to true
                     gameOver = true;
                 }
             }

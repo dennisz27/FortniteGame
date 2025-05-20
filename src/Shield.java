@@ -15,7 +15,7 @@ public class Shield {
     }
 
     public void draw(Graphics2D g) {
-        if (!collected) {
+        if (!collected) { //if not collected draw pot
             g.drawImage(pic, xpos, ypos, width, height, null);
         }
     }

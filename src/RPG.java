@@ -18,17 +18,17 @@ public class RPG {
 
         int speed = 6;
 
-        if (targetX > startX) {
+        if (targetX > startX) { //if the target X is greater than rocket X, set the speed to postiive
             dx = speed;
-        } else if (targetX < startX) {
+        } else if (targetX < startX) { //inverse
             dx = -speed;
         } else {
             dx = 0;
         }
 
-        if (targetY > startY) {
+        if (targetY > startY) {//if the target Y is greater than rocket Y, set the speed to postiive
             dy = speed;
-        } else if (targetY < startY) {
+        } else if (targetY < startY) { //inverse
             dy = -speed;
         } else {
             dy = 0;
