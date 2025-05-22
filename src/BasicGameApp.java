@@ -88,10 +88,10 @@ public class BasicGameApp implements Runnable, KeyListener {
         //variable and objects
         //create (construct) the objects needed for the game
         jonesy = new Character(450,300,0,0,100,100);
-        jonesy.name = "Jonesy";
-        jonesy.pic = Toolkit.getDefaultToolkit().getImage("jonesy.png");
-        mini = new Shield(randomX(), randomY());
-        mini.pic = Toolkit.getDefaultToolkit().getImage("mini.png");
+        jonesy.name = "Jonesy"; //declare jonesy name
+        jonesy.pic = Toolkit.getDefaultToolkit().getImage("jonesy.png"); //get jonesy image
+        mini = new Shield(randomX(), randomY()); //set mini to a new shield class with Random X and Random Y
+        mini.pic = Toolkit.getDefaultToolkit().getImage("mini.png"); // get mini image
 
     } // end BasicGameApp constructor
 
@@ -111,49 +111,49 @@ public class BasicGameApp implements Runnable, KeyListener {
         while (true) { //runs code
             if (showStartScreen) { //runs it showStartScreen is true
                 render();
-            } else if (!gameOver) {
+            } else if (!gameOver) { //if gameOver is not true
 
-                long currentTime = System.currentTimeMillis();
+                long currentTime = System.currentTimeMillis(); //keeps currenTime
 
                 if (currentTime - lastShieldSpawn > 4000) { // spawns shield after every 4 seconds
-                    pots.add(new Shield(randomX(), randomY()));
-                    lastShieldSpawn = currentTime;
+                    pots.add(new Shield(randomX(), randomY())); //add to pots
+                    lastShieldSpawn = currentTime; //set the last shield spawn to the current time
                 }
 
                 if (currentTime - lastRPGSpawn > 1500) { // spawns rocket after every 1.5 seconods
                     int Xco = 0;
                     int Yco = 0;
-                    int side = (int) (Math.random() * 4);
+                    int side = (int) (Math.random() * 4); //random side of the screen
 
                     if (side == 0) { //spawns shield on random side
                         Xco = 0;
-                        Yco = (int) (Math.random() * HEIGHT);
+                        Yco = (int) (Math.random() * HEIGHT); //spawns on side on random part on the left
                     } else if (side == 1) {
                         Xco = WIDTH;
-                        Yco = (int) (Math.random() * HEIGHT);
+                        Yco = (int) (Math.random() * HEIGHT); //spawns on random part of the right side
                     } else if (side == 2) {
-                        Xco = (int) (Math.random() * WIDTH);
+                        Xco = (int) (Math.random() * WIDTH); //spawns on random part of top
                         Yco = 0;
                     } else if (side == 3) {
-                        Xco = (int) (Math.random() * WIDTH);
+                        Xco = (int) (Math.random() * WIDTH); //spawns on random part on the bottom
                         Yco = HEIGHT;
                     }
 
-                    rpgs.add(new RPG(Xco, Yco, jonesy.xpos, jonesy.ypos));
-                    lastRPGSpawn = currentTime;
+                    rpgs.add(new RPG(Xco, Yco, jonesy.xpos, jonesy.ypos)); //add new rpg to arraylist
+                    lastRPGSpawn = currentTime; //set last rpg spawn to currenttime
                 }
 
                 checkKeys();
                 jonesy.move();
-                for (RPG r : rpgs) {
+                for (RPG r : rpgs) { //for every item in rpgs list move using method called in RPG.java
                     r.move();
                 }
 
-                collide();
+                collide(); //check collision
                 moveThings();
             }
             render();
-            pause(8);
+            pause(8); //sets the refresh rate of game
         }  //move all the game objects
 
     }
@@ -164,10 +164,10 @@ public class BasicGameApp implements Runnable, KeyListener {
         int speed = 2;
         jonesy.dx = 0;
         jonesy.dy = 0;
-        if (jonesy.up) jonesy.dy = -speed;
-        if (jonesy.down) jonesy.dy = speed;
-        if (jonesy.left) jonesy.dx = -speed;
-        if (jonesy.right) jonesy.dx = speed;
+        if (jonesy.up) {jonesy.dy = -speed;} //if jonesy up is true move speed up
+        if (jonesy.down) {jonesy.dy = speed;} //if jonesy down is true move char down
+        if (jonesy.left) {jonesy.dx = -speed;} //if jonesy left is true move left
+        if (jonesy.right) {jonesy.dx = speed;} //if jonesy right is true move right
 
         jonesy.move();
 
@@ -205,8 +205,8 @@ public class BasicGameApp implements Runnable, KeyListener {
             if (rpgRect.intersects(jonesyRect)) {
                 System.out.println("hit");
                 rpgs.remove(i);
-                i--;
-                jonesyHealth--;
+                i--; //remove the item from the arraylist and hide it on screen
+                jonesyHealth--; //subtract jonesy health
 
                 if(jonesyHealth == 0) { //if health is zero set gameover to true
                     gameOver = true;
